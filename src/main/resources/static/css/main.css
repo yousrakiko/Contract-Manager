@@ -1,0 +1,323 @@
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    background-image: linear-gradient(rgba(18, 36, 107, 0.7), rgba(18, 36, 107, 0.7)), url(../img/bg1.jpg);
+    min-height: 100vh;
+    font-family: "Clibri", sans-serif;
+    background-attachment: fixed;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 80px;
+}
+
+.container {
+    display: inline-flex;
+    flex-direction: column;
+    background: white;
+    padding: 2rem;
+    border-radius: 15px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    align-items: center;
+}
+
+.container h1 {
+    margin-bottom: 2rem;
+    color: #12246b;
+}
+
+.container h2 {
+    color: #12246b;
+    margin-bottom: 2rem;
+    font-size: 1.6rem;
+}
+
+.buttons-container {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin-top: 2rem;
+}
+
+button {
+    flex: 1;
+    max-width: 300px;
+    padding: 1rem 2rem;
+    font-size: 1.1rem;
+    background-color: #12246b;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: white;
+    color: #003366;
+    padding: 10px 40px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+}
+
+.navbar .logo {
+    display: flex;
+    align-items: center;
+}
+
+.navbar .logo img {
+    height: 40px;
+    width: auto;
+}
+
+.navbar ul {
+    list-style: none;
+    display: flex;
+    gap: 30px;
+    margin: 0;
+    padding: 0;
+    margin-left: auto;
+}
+
+.navbar ul li a {
+    color: #003366;
+    text-decoration: none;
+    font-weight: 500;
+    padding: 5px 10px;
+    transition: color 0.3s ease;
+}
+
+.navbar ul li a:hover {
+    color: #12246b;
+}
+
+.notif-container {
+    position: relative;
+    margin-left: 30px;
+}
+
+.notif-icon {
+    font-size: 1.2rem;
+    color: #003366;
+    cursor: pointer;
+}
+
+.notif-badge {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background-color: #ff4444;
+    color: white;
+    border-radius: 50%;
+    padding: 2px 6px;
+    font-size: 0.7rem;
+}
+
+button:hover {
+    background-color: #1a33a0;
+    transform: translateY(-2px);
+}
+
+button:active {
+    transform: translateY(0);
+}
+
+#contractForm {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    max-width: 800px;
+    margin: 0 auto;
+    text-align: left;
+}
+#contractForm label {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+#contractForm input {
+    flex: 1;
+    padding: 0.6rem 0.8rem;
+    font-size: 0.95rem;
+    border: 2px solid #e0e0e0;
+    border-radius: 6px;
+    background-color: #f8f9fa;
+    min-width: 200px;
+  
+}
+
+#contractForm label label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+#contractForm input:focus {
+    outline: none;
+    border-color: #12246b;
+    box-shadow: 0 0 0 3px rgba(18, 36, 107, 0.1);
+    background-color: white;
+}
+
+#contractForm input::placeholder {
+    color: #999;
+}
+
+#contractForm button {
+    margin: 1.5rem auto 0;
+    padding: 0.8rem 1.5rem;
+    font-size: 1rem;
+    background-color: #12246b;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    width: auto;
+    min-width: 200px;
+    display: block;
+}
+
+#contractForm button:hover {
+    background-color: #1a33a0;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+#contractForm button:active {
+    transform: translateY(0);
+}
+
+.form-sections {
+    display: flex;
+    justify-content: space-between;
+    gap: 2rem;
+    width: 100%;
+}
+
+.contract_info,
+.supplyer_info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+}
+
+.section-label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: #12246b;
+}
+
+.stacked-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.stacked-group label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.stacked-group input {
+    flex: 1;
+    min-width: 200px;
+    padding: 0.5rem;
+    border: 2px solid #e0e0e0;
+    border-radius: 6px;
+}
+
+
+.top_main {
+    width: 100%;
+    padding: 20px 40px;
+    display: flex;
+    justify-content: flex-start;
+    background-color: white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+}
+
+.back-link {
+    text-decoration: none;
+}
+
+.back-button {
+    padding: 8px 16px;
+    background-color: #12246b;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    color: white;
+    transition: background-color 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.back-button:hover {
+    background-color: #1a33a0;
+}
+
+.form-header {
+    display: flex;
+    align-items: center;
+    position: relative;
+    margin-bottom: 2rem;
+    width: 100%;
+}
+
+.form-header h2 {
+    margin: 0;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+}
+
+.back-link {
+    text-decoration: none;
+    position: relative;
+    z-index: 1;
+}
+
+.back-button {
+    padding: 8px 16px;
+    background-color: #12246b;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    color: white;
+    transition: background-color 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.back-button:hover {
+    background-color: #1a33a0;
+}

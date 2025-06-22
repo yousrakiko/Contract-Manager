@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Acquisition Contract Form</title>
+    <link rel="stylesheet" href="/css/main.css">
+
+
+</head>
+
+<body>
+    <header class="header">
+    <div class="header-wrapper">
+      <div class="header-container">
+        <div class="logo-container">
+          <img src="/img/BEA.jpg" alt="BEA Logo" />
+        </div>
+            <div class="topnav" id="navbar">
+    <a href="/dashboard" class="nav-link">
+        <i class="fas fa-home"></i><span class="nav-text">Dashboard</span>
+    </a>
+
+    <a href="/contractsManager" class="nav-link" sec:authorize="hasAnyAuthority('ROLE_VALIDATOR1', 'ROLE_ADMIN')">
+        <i class="fas fa-file-contract"></i><span class="nav-text">Contracts</span>
+    </a>
+
+    <a href="/userManager" class="nav-link" sec:authorize="hasAuthority('ROLE_ADMIN')">
+        <i class="fas fa-users"></i><span class="nav-text">Users</span>
+    </a>
+
+    <a href="/track" class="nav-link" sec:authorize="hasAnyAuthority('ROLE_VALIDATOR2', 'ROLE_ADMIN')">
+        <i class="fas fa-file-contract"></i><span class="nav-text">Sign & Review</span>
+    </a>
+
+    <a href="/analyse" class="nav-link" sec:authorize="isAuthenticated()">
+        <i class="fas fa-chart-line"></i><span class="nav-text">Reports</span>
+    </a>
+</div>
+<div class="header-right">
+              <div class="notif-container">
+                <i id="notifIcon" class="fa fa-bell notif-icon"></i>
+                <span id="notifBadge" class="notif-badge">3</span>
+            </div>
+            <div class="action">
+                <div class="notif-container">
+                    <div class="profile" onclick="menuToggle();">
+                        <i id="user-icon" class="fas fa-user-circle user-icon"></i>
+                    </div>
+                </div>
+                <div class="menu">
+                    <h3>John Doe<br /><span>Administrator</span></h3>
+                    <ul>
+                        <li><i class="fas fa-user"></i><a href="#">My Profile</a></li>
+                        <li><i class="fas fa-cog"></i><a href="#">Settings</a></li>
+                        <li><i class="fas fa-question-circle"></i><a href="#">Help</a></li>
+                        <li><i class="fas fa-sign-out-alt"></i><a href="/logout">Logout</a></li>
+                    </ul>
+                  </div>
+                </div>
+            </div>
+        </div>
+    </div>
+  </header>
+
+    <div class="container">
+        <h2>Fill in Prestation Contract Info</h2>
+        <form id="contractForm">
+            <label>Company Name: <input name="companyName" required /></label><br>
+            <label>Client Name: <input name="clientName" required /></label><br>
+            <label>Contract Date: <input type="date" name="contractDate" required /></label><br>
+            <button type="submit">Generate Contract</button>
+        </form>
+    </div>
+
+</body>
+
+</html>

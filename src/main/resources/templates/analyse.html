@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="${#locale.language}" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title th:text="#{reports}">Reports</title>
+  <meta name="_csrf" th:content="${_csrf.token}"/>
+  <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+  <meta name="logoutConfirm" th:content="#{logoutConfirm}" />
+  <link rel="stylesheet" href="/css/analyse.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"/>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script th:inline="javascript">
+    // Make translations available to JavaScript
+    const translations = {
+      awaitingModification: /*[[#{awaitingModification}]]*/ '',
+      awaitingReview: /*[[#{awaitingReview}]]*/ '',
+      signedRecently: /*[[#{signedRecently}]]*/ '',
+      daysLeft: /*[[#{daysLeft}]]*/ '',
+      errorLoadingData: /*[[#{errorLoadingData}]]*/ '',
+      filteredBy: /*[[#{filteredBy}]]*/ '',
+      pleaseSelectMonth: /*[[#{pleaseSelectMonth}]]*/ '',
+      errorLoadingChart: /*[[#{errorLoadingChart}]]*/ '',
+      newActiveContracts: /*[[#{newActiveContracts}]]*/ '',
+      newSignedContracts: /*[[#{newSignedContracts}]]*/ '',
+      newCreatedContracts: /*[[#{newCreatedContracts}]]*/ '',
+      avgSignatureDelay: /*[[#{avgSignatureDelay}]]*/ '',
+      averageContractSignatureDelay: /*[[#{averageContractSignatureDelay}]]*/ '',
+      days: /*[[#{days}]]*/ '',
+      month: /*[[#{month}]]*/ ''
+    };
+  </script>
+</head>
+
+<body>
+  <header class="header">
+    <div class="header-wrapper">
+      <div class="header-container">
+        <div class="logo-container">
+          <img src="/img/BEA.jpg" alt="BEA Logo" />
+        </div>
+            <div class="topnav" id="navbar">
+    <!-- Visible to all authenticated users -->
+    <a href="/dashboard" class="nav-link">
+        <i class="fas fa-home"></i><span class="nav-text" th:text="#{dashboard}">Dashboard</span>
+    </a>
+
+    <!-- Show to VALIDATOR1 and ADMIN only -->
+    <a href="/contractsManager" class="nav-link" sec:authorize="hasAnyAuthority('ROLE_VALIDATOR1', 'ROLE_ADMIN')">
+        <i class="fas fa-file-contract"></i><span class="nav-text" th:text="#{contracts}">Contracts</span>
+    </a>
+
+    <!-- Show to ADMIN only -->
+    <a href="/userManager" class="nav-link" sec:authorize="hasAuthority('ROLE_ADMIN')">
+        <i class="fas fa-users"></i><span class="nav-text" th:text="#{users}">Users</span>
+    </a>
+
+    <!-- Show to VALIDATOR2 and ADMIN only -->
+    <a href="/track" class="nav-link" sec:authorize="hasAnyAuthority('ROLE_VALIDATOR2', 'ROLE_ADMIN')">
+        <i class="fas fa-file-contract"></i><span class="nav-text" th:text="#{signAndReview}">Sign & Review</span>
+    </a>
+
+    <!-- Show to all authenticated users -->
+    <a href="/analyse" class="nav-link" sec:authorize="isAuthenticated()">
+        <i class="fas fa-chart-line"></i><span class="nav-text" th:text="#{reports}">Reports</span>
+    </a>
+</div>
+<div class="header-right">
+  <div class="notif-container">
+      <i id="notifIcon" class="fa fa-bell notif-icon"></i>
+      <span id="notifBadge" class="notif-badge">3</span>
+  </div>
+
+  <div class="action">
+    <div class="notif-container">
+      <div class="profile" onclick="menuToggle();">
+          <i id="user-icon" class="fas fa-user-circle user-icon"></i>
+      </div>
+      </div>
+      <div class="menu">
+          <h3>
+              <span class="user-fullname" th:text="${name} + ' ' + ${user.lastName}"></span>
+              <br />
+              <span class="user-role" th:text="${role}">Administrator</span>
+          </h3>
+          <ul>
+              <li><i class="fas fa-user"></i><a href="#" th:text="#{myProfile}">My Profile</a></li>
+              <li><i class="fas fa-cog"></i><a href="#" th:text="#{settings}">Settings</a></li>
+              <li><i class="fas fa-sign-out-alt"></i>
+                <form th:action="@{/logout}" method="post" style="display: inline;" id="logoutForm">
+                  <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                  <a href="#" onclick="confirmLogout(event)" th:text="#{logout}">Logout</a>
+                </form>
+              </li>
+          </ul>
+      </div>
+  </div>
+</div>
+      </div>
+  </div>
+</header>
+<main>
+   
+  <!-- Row 1: Summary Cards -->
+<div class="dashboard-background">
+  <section class="dashboard-cards">
+      <div class="card small-card">
+      <h3 th:text="#{contractsWaitingModification}">Contracts waiting modification <i class="fas fa-tools"></i></h3>
+      <div class="card-value" id="awaiting-modifications-count">Loading...</div>
+    </div>
+    <div class="card small-card">
+  <h3 th:text="#{contractsAwaitingReview}">Contracts awaiting review <i class="fas fa-eye"></i></h3>
+      <div class="card-value" id="awaiting-review-count">Loading...</div>
+    </div>
+    <div class="card small-card">
+      <h3 th:text="#{recentlySignedContracts}">Recently signed contracts <i class="fas fa-pen-nib"></i></h3>
+      <div class="card-value" id="recentSignedContracts">Loading...</div>
+      <div class="card-note">
+       <span class="triangle-up"></span>
+       <span class="note-text" th:text="#{improvedBy}">Improved by 20% since the past 2 months</span>
+      </div>
+    </div>
+  </section>
+</div>
+ <div class="scale-container">
+  <!-- Row 2: Bar chart + contract expiring -->
+  <section class="dashboard-row">
+
+     <!-- Middle column -->
+  <div class="card-column middle-column">
+<div class="card pie-card">
+  <h3 th:text="#{contractTypesDistribution}">Contract Types Distribution</h3>
+  <div class="circle-wrapper">
+    <!-- LEFT SIDE: labels -->
+    <div class="contract-types">
+      <div class="type-item">
+        <span class="type-color" style="background-color: #322C75;"></span>
+        <span class="type-label service" th:text="#{service}">Service (0)</span>
+      </div>
+      <div class="type-item">
+        <span class="type-color" style="background-color: #8cd9f9;"></span>
+        <span class="type-label supply" th:text="#{supply}">Supply (0)</span>
+      </div>
+    </div>
+
+    <!-- RIGHT SIDE: chart -->
+    <div class="circle">
+<svg viewBox="0 0 120 120" width="100" height="100">
+  <!-- Full circle background (supply) -->
+  <circle cx="60" cy="60" r="50" stroke="#8cd9f9" stroke-width="15" fill="none" />
+  
+  <!-- Foreground arc (service) -->
+  <circle id="serviceProgress"
+          cx="60"
+          cy="60"
+          r="50"
+          stroke="#322C75"
+          stroke-width="15"
+          fill="none"
+          stroke-linecap="round"
+          transform="rotate(-90 60 60)" />
+</svg>
+
+
+
+    </div>
+  </div>
+</div>
+
+   <div class="card perfor-card">
+  <h3 th:text="#{performanceSnapshot}">Performance Snapshot</h3>
+  <div id="performance">
+  <h1 th:text="#{pastFiveMonths}">For The past 5 months</h1>
+    <div class="snapshot-card">
+      <i class="fas fa-chart-line animated-icon"></i>
+      <h3 id="activeContracts">Loading...</h3>
+    </div>
+
+    <div class="snapshot-card">
+      <i class="fas fa-file-signature animated-icon"></i>
+      <h3 id="signedContracts">Loading...</h3>
+    </div>
+
+    <div class="snapshot-card">
+      <i class="fas fa-plus-circle animated-icon"></i>
+      <h3 id="createdContracts">Loading...</h3>
+    </div>
+
+  </div>
+</div>
+
+    <div class="card avg-card">
+      <h3 th:text="#{avgSignatureDelay}">Avg Signature Delay</h3>
+      <div style="height: 300px; overflow-x: auto;">
+        <canvas id="signatureDelayChart"></canvas>
+      </div>
+    </div>
+
+  
+   
+
+     <div class="card large-card">
+      <h3 th:text="#{topContractsByGuarantee}">Top 5 Contracts by Guarantee Rate</h3>
+      <ul id="topGuaranteesList"></ul>
+    </div>
+
+  </div>
+
+
+<div class="card-column actualmiddle-column">
+  <!-- Bar chart column -->
+  <div class="card lines-card">
+    <div class="chart-header">
+      <h3 th:text="#{monthlyTrends}">Monthly trends</h3>
+      </div>
+      <div class="chart-container">
+      <div style="height: 430px; overflow-x: auto;">
+      <canvas id="monthlytrends"></canvas>
+      </div>
+    </div>
+    </div>
+    
+    <div class="card bar-card">
+    <div class="chart-header">
+      <h3 th:text="#{contractValueBreakdown}">Contract Value Breakdown by Month</h3>
+      <div class="month-filter-container">
+        <div class="dropdown">
+          <button class="dropdown-toggle" type="button" id="monthFilterButton" data-bs-toggle="dropdown" aria-expanded="false">
+            <span th:text="#{selectMonths}">Select Months</span> <i class="fas fa-chevron-down"></i>
+          </button>
+          <div class="dropdown-menu month-options" aria-labelledby="monthFilterButton">
+            <!-- Months will be populated by JavaScript -->
+          </div>
+        </div>
+        <button id="applyMonthFilter" class="btn btn-primary" th:text="#{applyFilter}">Apply Filter</button>
+      </div>
+    </div>
+    <div class="chart-container">
+    <div style="height: 400px; overflow-x: auto;">
+      <canvas id="guaranteeVsBudgetChart"></canvas>
+      <div id="selectedMonthsLabel" class="selected-months-label"></div>
+      
+    </div>
+    </div>
+  </div>
+    
+  
+  
+</div>
+
+
+
+  <!-- Right column -->
+  <div class="card-column right-column">
+    <div class="card large-card">
+      <h3 th:text="#{contractsExpiringSoon}">Contract Expiring soon</h3>
+      <ul id="expiringContractsList"></ul>
+    </div>
+    <div class="card chsrt-card">
+  <div class="table-header-container">
+    <h3 class="table-header" th:text="#{latestActions}">Latest actions</h3>
+  </div>
+  
+  <div class="table-subheader-container">
+    <div class="table-subheader">
+      <span class="id-col" th:text="#{moduleId}">Module-ID</span>
+      <span class="status-col" th:text="#{action}">Action</span>
+      <span class="title-col" th:text="#{user}">User</span>
+      <span class="date-col" th:text="#{timestamp}">Timestamp</span>
+    </div>
+  </div>
+
+  <div class="table-body" id="latest-actions-body">
+    <!-- JS will populate this -->
+  </div>
+</div>
+
+
+    </div>
+  </div>
+</section>
+
+
+<!--4th financial row -->
+
+
+ </div>
+
+</main>
+
+<!-- User Profile Modal -->
+<div id="profileModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 th:text="#{userProfile}">User Profile</h2>
+            <div class="modal-actions">
+                <button class="edit-button" onclick="toggleEditMode()">
+                    <i class="fas fa-pencil-alt"></i>
+                </button>
+                <button class="close-button" onclick="closeProfileModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        </div>
+        <div class="modal-body">
+            <div class="left_content">
+                <form id="profileForm" onsubmit="updateEmail(event)">
+                    <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
+                    <p><strong th:text="#{matricule}">Matricule:</strong> <span th:text="${user.matricule}"></span></p>
+                    <p><strong th:text="#{name}">Name:</strong> <span th:text="${user.firstName + ' ' + user.lastName}"></span></p>
+                    <p>
+                        <strong th:text="#{email}">Email:</strong> 
+                        <span id="emailDisplay" th:text="${user.email}"></span>
+                        <input type="email" id="emailInput" name="email" th:value="${user.email}" style="display: none;" required>
+                    </p>
+                    <p><strong th:text="#{role}">Role:</strong> <span th:text="${user.role.roleName}"></span></p>
+                    <p><strong th:text="#{structureId}">Structure ID:</strong> <span th:text="${user.structId}"></span></p>
+                    <p><strong th:text="#{status}">Status:</strong> <span th:text="${user.status}"></span></p>
+                    <div id="saveButtonContainer" style="display: none; text-align: right; margin-top: 20px;">
+                        <button type="submit" class="save-button" th:text="#{saveChanges}">Save Changes</button>
+                    </div>
+                    <div id="errorMessage" style="color: red; margin-top: 10px; display: none;"></div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="/js/analyse.js"></script>
+<script>
+function openProfileModal() {
+    document.getElementById('profileModal').style.display = 'block';
+}
+
+function closeProfileModal() {
+    document.getElementById('profileModal').style.display = 'none';
+   
+    toggleEditMode(false);
+}
+
+function toggleEditMode(show = true) {
+    const emailDisplay = document.getElementById('emailDisplay');
+    const emailInput = document.getElementById('emailInput');
+    const saveButtonContainer = document.getElementById('saveButtonContainer');
+    
+    if (show) {
+        emailDisplay.style.display = 'none';
+        emailInput.style.display = 'inline';
+        saveButtonContainer.style.display = 'block';
+    } else {
+        emailDisplay.style.display = 'inline';
+        emailInput.style.display = 'none';
+        saveButtonContainer.style.display = 'none';
+    }
+}
+
+// Update the menu item click handler
+document.querySelector('.menu ul li:first-child a').onclick = function(e) {
+    e.preventDefault();
+    openProfileModal();
+};
+
+// Close modal when clicking outside
+window.onclick = function(event) {
+    const modal = document.getElementById('profileModal');
+    if (event.target == modal) {
+        closeProfileModal();
+    }
+}
+
+function updateEmail(event) {
+    event.preventDefault();
+    
+    const emailInput = document.getElementById('emailInput');
+    const errorMessage = document.getElementById('errorMessage');
+    const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+    const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+    
+    fetch('/api/users/update-email', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            [csrfHeader]: csrfToken
+        },
+        body: JSON.stringify({
+            email: emailInput.value
+        })
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Failed to update email');
+        }
+        return response.json();
+    })
+    .then(data => {
+        document.getElementById('emailDisplay').textContent = emailInput.value;
+
+        toggleEditMode(false);
+        errorMessage.style.display = 'none';
+        alert('Email updated successfully');
+    })
+    .catch(error => {
+        errorMessage.textContent = 'Failed to update email. Please try again.';
+        errorMessage.style.display = 'block';
+    });
+}
+
+function confirmLogout(event) {
+    event.preventDefault();
+    if (confirm(document.querySelector('meta[name="logoutConfirm"]').getAttribute('content'))) {
+        document.getElementById('logoutForm').submit();
+    }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+    <div th:fragment="language-selector" class="language-selector">
+        <div class="dropdown">
+            <button class="dropdown-toggle" type="button" id="languageDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="fas fa-globe"></i>
+                <span th:text="#{language}">Language</span>
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="languageDropdown">
+                <li>
+                    <a class="dropdown-item" th:href="@{/dashboard(lang='en')}">
+                        <i class="fas fa-flag-usa"></i>
+                        <span th:text="#{english}">English</span>
+                    </a>
+                </li>
+                <li>
+                    <a class="dropdown-item" th:href="@{/dashboard(lang='fr')}">
+                        <i class="fas fa-flag"></i>
+                        <span th:text="#{french}">French</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html> 

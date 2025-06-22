@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="${#locale.language}" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width">
+    <title th:text="#{signAndReview}">Contracts Review</title>
+    <link rel="stylesheet" href="/css/track.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.2/sockjs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+    <meta name="logoutConfirm" th:content="#{logoutConfirm}" />
+    <style>
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 25px;
+            border-radius: 4px;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            animation: slideIn 0.5s ease-out;
+            z-index: 1000;
+        }
+
+        .toast.success {
+            background-color: #4CAF50;
+        }
+
+        .toast.error {
+            background-color: #f44336;
+        }
+
+        .toast i {
+            font-size: 20px;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeOut {
+            from {
+                opacity: 1;
+            }
+            to {
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <input type="hidden" id="user-matricule" th:value="${#authentication.name}" />
+   
+    <div th:if="${message}" class="toast success">
+        <i class="fas fa-check-circle"></i>
+        <span th:text="${message}"></span>
+    </div>
+    <div th:if="${error}" class="toast error">
+        <i class="fas fa-exclamation-circle"></i>
+        <span th:text="${error}"></span>
+    </div>
+
+  <header class="header">
+    <div class="header-wrapper">
+      <div class="header-container">
+        <div class="logo-container">
+          <img src="/img/BEA.jpg" alt="BEA Logo" />
+        </div>
+            <div class="topnav" id="navbar">
+    <a href="/dashboard" class="nav-link">
+        <i class="fas fa-home"></i><span class="nav-text" th:text="#{dashboard}">Dashboard</span>
+    </a>
+
+    <a href="/contractsManager" class="nav-link" sec:authorize="hasAnyAuthority('ROLE_VALIDATOR1', 'ROLE_ADMIN')">
+        <i class="fas fa-file-contract"></i><span class="nav-text" th:text="#{contracts}">Contracts</span>
+    </a>
+
+    <a href="/userManager" class="nav-link" sec:authorize="hasAuthority('ROLE_ADMIN')">
+        <i class="fas fa-users"></i><span class="nav-text" th:text="#{users}">Users</span>
+    </a>
+
+    <a href="/track" class="nav-link" sec:authorize="hasAnyAuthority('ROLE_VALIDATOR2', 'ROLE_ADMIN')">
+        <i class="fas fa-file-contract"></i><span class="nav-text" th:text="#{signAndReview}">Sign & Review</span>
+    </a>
+
+    <a href="/analyse" class="nav-link" sec:authorize="isAuthenticated()">
+        <i class="fas fa-chart-line"></i><span class="nav-text" th:text="#{reports}">Reports</span>
+    </a>
+                </div>
+ <div class="header-right">
+              <div class="notif-container">
+                <i id="notifIcon" class="fa fa-bell notif-icon"></i>
+                <span id="notifBadge" class="notif-badge">3</span>
+            </div>
+            <div class="action">
+                <div class="notif-container">
+                    <div class="profile" onclick="menuToggle();">
+                        <i id="user-icon" class="fas fa-user-circle user-icon"></i>
+                    </div>
+                </div>
+                <div class="menu">
+                    <h3>
+                        <span class="user-fullname" th:text="${#authentication.name}"></span>
+                        <br />
+                        <span class="user-role" th:text="${#authentication.authorities[0].authority}">Administrator</span>
+                    </h3>
+                    <ul>
+                        <li><i class="fas fa-user"></i><a href="#" th:text="#{myProfile}">My Profile</a></li>
+                        <li><i class="fas fa-cog"></i><a href="#" th:text="#{settings}">Settings</a></li>
+                        <li><i class="fas fa-question-circle"></i><a href="#" th:text="#{help}">Help</a></li>
+                        <li><i class="fas fa-sign-out-alt"></i>
+                            <form th:action="@{/logout}" method="post" style="display: inline;" id="logoutForm">
+                                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                                <a href="#" onclick="confirmLogout(event)" th:text="#{logout}">Logout</a>
+                            </form>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+  </header>
+
+        <main class="tab1">
+            <div class="tracking-container">
+                <div class="left-content">
+                    <h2 class="tracking-title" th:text="#{signAndReview}">Sign & Review</h2>
+                    <p class="tracking-subtitle" th:text="#{totalContracts(20)}">Total 20 contracts</p>
+                </div>
+                <div class="right-content">
+                    <input type="text" id="search" class="search-bar" th:placeholder="#{findContract}">
+                </div>
+            </div>
+            <div class="tab2">
+              <div class="tracking-actions">
+                <div class="everything-checkbox">
+                    <label>
+                        <input type="checkbox" id="everything-checkbox"> <span th:text="#{selectEverything}">Select Everything</span>
+                    </label>
+                </div>
+             <div class="right-content">
+                   <button id="openFilterModal" class="filter-btn">
+                       <i class="fa fa-filter"></i> <span th:text="#{filters}">Filters</span>
+                    </button>
+                    <div id="filterModal" class="modal">
+  <div class="modal-content">
+    <span class="close-btn" id="closeFilterModal">&times;</span>
+    <h3 class="modal-title" th:text="#{filtersList}">Filters list</h3>
+
+    <form id="filtersForm">
+   
+      <div class="filter-row">
+        <label for="filterSigned" th:text="#{signed}">Signed</label>
+        <select id="filterSigned" class="filter-input">
+          <option value="" th:text="#{all}">All</option>
+          <option value="true" th:text="#{yes}">Yes</option>
+          <option value="false" th:text="#{no}">No</option>
+        </select>
+      </div>
+
+      <div class="filter-row">
+        <label for="filterCreationDate" th:text="#{creationDate}">Creation date</label>
+        <div class="date-wrapper">
+          <input type="date" id="filterCreationDate" class="filter-input" />
+          <span class="date-placeholder" th:text="#{allDates}">All dates</span>
+        </div>
+      </div>
+
+      <div class="filter-row">
+        <label for="filterSignatureDate" th:text="#{signatureDate}">Signature date</label>
+        <div class="date-wrapper">
+          <input type="date" id="filterSignatureDate" class="filter-input" />
+          <span class="date-placeholder" th:text="#{allDates}">All dates</span>
+        </div>
+      </div>
+
+      <div class="filter-row">
+        <label for="filterCancellationDate" th:text="#{cancellationDate}">Cancellation date</label>
+        <div class="date-wrapper">
+          <input type="date" id="filterCancellationDate" class="filter-input" />
+          <span class="date-placeholder" th:text="#{allDates}">All dates</span>
+        </div>
+      </div>
+
+      <div class="filter-row">
+        <label for="filterEndDate" th:text="#{endDate}">End date</label>
+        <div class="date-wrapper">
+          <input type="date" id="filterEndDate" class="filter-input" />
+          <span class="date-placeholder" th:text="#{allDates}">All dates</span>
+        </div>
+      </div>
+
+      <div class="filter-row">
+        <label for="filterType" th:text="#{type}">Type</label>
+        <select id="filterType" class="filter-input">
+          <option value="" th:text="#{allTypes}">All</option>
+          <option value="supply" th:text="#{supply}">supply</option>
+          <option value="service" th:text="#{service}">service</option>
+        </select>
+      </div>
+
+      <div class="filter-row">
+        <label for="filterStatus" th:text="#{status}">Status</label>
+        <select id="filterStatus" class="filter-input">
+          <option value="" th:text="#{allStatus}">All</option>
+          <option value="approved" th:text="#{approved}">Approved</option>
+          <option value="pending" th:text="#{pending}">Pending</option>
+        </select>
+      </div>
+
+      <div class="filter-row">
+        <label for="filterApproval" th:text="#{approvalStage}">Approval stage</label>
+        <select id="filterApproval" class="filter-input">
+          <option value="" th:text="#{all}">All</option>
+          <option value="INITIAL" th:text="#{initial}">Initial</option>
+          <option value="FINAL_APPROVAL" th:text="#{final}">Final</option>
+          <option value="MANAGER_REVIEW" th:text="#{inReview}">In Review</option>
+        </select>
+      </div>
+
+      <div class="filter-row">
+        <label for="filterContractor" th:text="#{contractorName}">Contractor Name</label>
+        <input type="text" id="filterContractor" class="filter-input" th:placeholder="#{all}" />
+      </div>
+
+      <div class="modal-actions">
+        <button type="submit" id="applyFiltersBtn" class="apply-btn" th:text="#{applyFilters}">Apply filters</button>
+        <button type="reset" class="reset-btn" th:text="#{reset}">Reset</button>
+      </div>
+    </form>
+  </div>
+</div>
+                
+                    <select class="contract-action">
+                        <option selected disabled th:text="#{pendingOptions}">Pending Options</option>
+                        <option value="all" th:text="#{all}">All</option>
+                        <option value="pending_with_comment" th:text="#{pendingWithComment}">Pending with Comment</option>
+                        <option value="pending_without_comment" th:text="#{pendingWithoutComment}">Pending without Comment</option>
+                        <option value="modified" th:text="#{modified}">Modified</option>
+                    </select>
+                
+                    <select class="contract-request">
+                        <option th:text="#{allStatus}">All Status</option>
+                        <option th:text="#{pending}">Pending</option>
+                        <option th:text="#{modified}">Modified</option>
+                        <option th:text="#{signed}">Signed</option>
+                    </select>
+                    <div class="refresh-container">
+                        <button class="refresh-btn">
+                            <i class="fa fa-refresh"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="tab3">
+               <section class="contracts-table">
+                <div class="table-header-container">
+                    <h3 class="table-header" th:text="#{listOfContracts}">List of contracts</h3>
+                </div> 
+                <div class="table-subheader-container">
+                    <div class="table-subheader">
+                        <span class="select-col"></span>
+                        <span class="date-col" th:text="#{creationDate}">Date of creation</span>
+                        <span class="id-col" th:text="#{contractId}">ID-contract</span>
+                        <span class="title-col" th:text="#{contractName}">Contract name</span>
+                        <span class="isSigned-col" th:text="#{signed}">Signed</span>
+                        <span class="status-col" th:text="#{status}">Status</span>
+                        <span class="actions-col" th:text="#{actions}">Actions</span>
+                    </div>
+                </div>
+                <div class="table-body-scroll">
+                    <div class="table-body"></div>
+                </div>
+                </section>
+            </div>
+        </div>
+        </main>
+        
+    <div class="notif-popup" id="notifPopup">
+        <div class="notif-header">
+            <h3 th:text="#{notifications}">Notifications</h3>
+            <div class="notif-filters">
+                <button class="filter-btn active" data-filter="all" th:text="#{all}">All</button>
+                <button class="filter-btn" data-filter="unread" th:text="#{unread}">Unread</button>
+                <button class="filter-btn" data-filter="read" th:text="#{read}">Read</button>
+            </div>
+        </div>
+        <div class="notif-content">
+            <span class="close-btn" id="closeNotif">&times;</span>
+            <ul id="notifList">
+                <!-- Notifications will be loaded here -->
+            </ul>
+        </div>
+    </div>
+
+    <script src="/js/navbar.js"></script>
+    <script src="/js/ws-notifications.js"></script>
+    <script src="/js/track.js"></script>
+    <script>
+        function confirmLogout(event) {
+            event.preventDefault();
+            if (confirm(document.querySelector('meta[name="logoutConfirm"]').getAttribute('content'))) {
+                document.getElementById('logoutForm').submit();
+            }
+        }
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            const toasts = document.querySelectorAll('.toast');
+            toasts.forEach(toast => {
+                setTimeout(() => {
+                    toast.style.animation = 'fadeOut 0.5s ease-out forwards';
+                    setTimeout(() => toast.remove(), 500);
+                }, 3000);
+            });
+        });
+    </script>
+</body>
+</html>
+    

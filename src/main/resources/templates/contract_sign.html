@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Contract Details</title>
+    <link rel="stylesheet" href="/css/details.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" />
+
+
+</head>
+
+<body>
+    <header class="header">
+    <div class="header-wrapper">
+      <div class="header-container">
+        <div class="logo-container">
+          <img src="/img/BEA.jpg" alt="BEA Logo" />
+        </div>
+            <div class="topnav" id="navbar">
+
+    <a href="/dashboard" class="nav-link">
+        <i class="fas fa-home"></i><span class="nav-text">Dashboard</span>
+    </a>
+
+    <a href="/contractsManager" class="nav-link" sec:authorize="hasAnyAuthority('ROLE_VALIDATOR1', 'ROLE_ADMIN')">
+        <i class="fas fa-file-contract"></i><span class="nav-text">Contracts</span>
+    </a>
+
+    <a href="/userManager" class="nav-link" sec:authorize="hasAuthority('ROLE_ADMIN')">
+        <i class="fas fa-users"></i><span class="nav-text">Users</span>
+    </a>
+
+    <a href="/track" class="nav-link" sec:authorize="hasAnyAuthority('ROLE_VALIDATOR2', 'ROLE_ADMIN')">
+        <i class="fas fa-file-contract"></i><span class="nav-text">Sign & Review</span>
+    </a>
+
+    <a href="/analyse" class="nav-link" sec:authorize="isAuthenticated()">
+        <i class="fas fa-chart-line"></i><span class="nav-text">Reports</span>
+    </a>
+</div>
+              <div class="notif-container">
+                <i id="notifIcon" class="fa fa-bell notif-icon"></i>
+                <span id="notifBadge" class="notif-badge">3</span>
+            </div>
+        </div>
+    </div>
+  </header>>
+     <main class="main">
+        <div class="top_main">
+            <a th:href="@{/contracts/contracts/list}">
+                <button class="back-button">← Back</button>
+            </a>
+        </div>
+
+        <div class="bottom_main">
+            <div class="left_bottom">
+                <div class="left_content">
+
+                    <h1>Contract's Details :</h1>
+                    <p>Contract name: <span th:text="${contract.contractTitle}"></span></p>
+                    <p>Supplier:
+                        <span th:text="${contract.contractorName}"></span>
+                    </p>
+                    <p>Amount:
+                        <span th:text="${contract.budgetAmount}"></span>
+                    </p>
+
+                    <p>Status: <span th:text="${contract.status}"></span></p>
+                </div>
+
+            </div>
+            <div class="right_bottom">
+                <div class="download">
+                    <a th:href="@{/contracts/{id}/download(id=${contract.contractId})}">Download Word Document</a>
+                </div>
+<div th:if="${(#strings.toLowerCase(contract.status) == 'pending' or #strings.toLowerCase(contract.status) == 'modified' or #strings.toLowerCase(contract.status) == 'pending with comment') and mode == 'sign'}">
+    <form th:action="@{'/contracts/' + ${contract.contractId} + '/review/sign'}" method="post">
+        <button type="submit">Sign & Approve</button>
+    </form>
+    <form th:action="@{'/contracts/' + ${contract.contractId} + '/review/reject'}" method="post">
+        <button type="submit">Reject</button>
+    </form>
+</div>
+
+<div th:if="${(#strings.toLowerCase(contract.status) == 'pending' or #strings.toLowerCase(contract.status) == 'modified' or #strings.toLowerCase(contract.status) == 'pending with comment') and mode == 'comment'}">
+    <form th:action="@{'/contracts/' + ${contract.contractId} + '/review/comment'}" method="post">
+        <label for="comment">Leave Comment:</label>
+        <textarea name="comment" rows="4" cols="50" required></textarea>
+        <button type="submit">Submit Comment</button>
+    </form>
+</div>
+                    <p th:if="${message}" th:text="${message}" style="color: green;"></p>
+                    <p th:if="${error}" th:text="${error}" style="color: red;"></p>
+
+                </div>
+
+            </div>
+        </div>
+
+    </main>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Check if we should scroll to comments
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('scrollTo') === 'comments') {
+        const commentsSection = document.getElementById('comments-section');
+        if (commentsSection) {
+            commentsSection.scrollIntoView({ behavior: 'smooth' });
+        }
+    }
+});
+</script>
+
+</body>
+
+</html>

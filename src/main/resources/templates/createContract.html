@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Select Contract Type</title>
+    <link rel="stylesheet" href="/css/createContract.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"/>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet"/>
+
+    <body>
+        <header class="header">
+    <div class="header-wrapper">
+      <div class="header-container">
+        <div class="logo-container">
+          <img src="/img/BEA.jpg" alt="BEA Logo" />
+        </div>
+            <div class="topnav" id="navbar">
+    <a href="/dashboard" class="nav-link">
+        <i class="fas fa-home"></i><span class="nav-text">Dashboard</span>
+    </a>
+
+    <a href="/contractsManager" class="nav-link" sec:authorize="hasAnyAuthority('ROLE_VALIDATOR1', 'ROLE_ADMIN')">
+        <i class="fas fa-file-contract"></i><span class="nav-text">Contracts</span>
+    </a>
+
+    <a href="/userManager" class="nav-link" sec:authorize="hasAuthority('ROLE_ADMIN')">
+        <i class="fas fa-users"></i><span class="nav-text">Users</span>
+    </a>
+
+    <a href="/track" class="nav-link" sec:authorize="hasAnyAuthority('ROLE_VALIDATOR2', 'ROLE_ADMIN')">
+        <i class="fas fa-file-contract"></i><span class="nav-text">Sign & Review</span>
+    </a>
+
+    <a href="/analyse" class="nav-link" sec:authorize="isAuthenticated()">
+        <i class="fas fa-chart-line"></i><span class="nav-text">Reports</span>
+    </a>
+</div>
+<div class="header-right">
+              <div class="notif-container">
+                <i id="notifIcon" class="fa fa-bell notif-icon"></i>
+                <span id="notifBadge" class="notif-badge">3</span>
+            </div>
+            <div class="action">
+                <div class="notif-container">
+                    <div class="profile" onclick="menuToggle();">
+                        <i id="user-icon" class="fas fa-user-circle user-icon"></i>
+                    </div>
+                </div>
+                <div class="menu">
+                    <h3>John Doe<br /><span>Administrator</span></h3>
+                    <ul>
+                        <li><i class="fas fa-user"></i><a href="#">My Profile</a></li>
+                        <li><i class="fas fa-cog"></i><a href="#">Settings</a></li>
+                        <li><i class="fas fa-question-circle"></i><a href="#">Help</a></li>
+                        <li><i class="fas fa-sign-out-alt"></i><a href="/logout">Logout</a></li>
+                    </ul>
+                  </div>
+                </div>
+            </div>
+        </div>
+    </div>
+  </header>
+<main>
+        <div class="container">
+            <h1>Select Contract Type</h1>
+            <form action="/contracts/create/form" method="get">
+                <div class="buttons-container">
+                    <button type="submit" name="type" value="acquisition">Acquisition Contract</button>
+                    <button type="submit" name="type" value="prestation">Prestation Contract</button>
+                </div>
+            </form>
+        </div>
+    </body>
+
+</html>

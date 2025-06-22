@@ -1,0 +1,512 @@
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+     background-color: #003366;
+
+}
+.header {
+  background-color: #ffffff; 
+ 
+}
+
+
+.table-row {
+  display: flex;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid #eee;
+  gap: 20px; 
+}
+
+.contract-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  align-items: center;
+}
+
+
+.header-wrapper {
+  width: 100%;
+  border-bottom: 1px solid #322C75;
+}
+
+
+.header-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 20px;
+  width: 100%;
+}
+
+
+.logo-container img {
+  height: 60px;
+  padding-left: 7px;
+}
+.topnav {
+  background-color: #ffffff;
+  width: 100%;
+  height: 60px;
+  display: flex;              
+  justify-content: flex-end;
+  gap: 20px;  
+  align-items: center;       
+  transition: all 0.5s ease;
+}
+
+.topnav a {
+  color: #322C75;
+  text-align: center;
+  padding: 0 25px;             
+  text-decoration: none;
+  font-size: 20px;
+  font-family: 'Judson', bold;
+  display: flex;
+  align-items: center;
+  height: 100%;               
+   position: relative;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.topnav a i {
+  font-size: 20px;
+  transition: font-size 0.3s ease;
+}
+
+
+.topnav a .nav-text {
+  margin-left: 8px;
+  transition: opacity 0.3s ease;
+}
+
+
+.topnav a.active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 15%;
+  width: 70%;
+  height: 3px;
+  background-color: #322C75;
+  border-radius: 10px;
+  transition: width 0.3s ease;
+}
+
+@media (max-width: 992px) {
+  .topnav a {
+    justify-content: center;
+    padding: 0 10px;
+  }
+
+  .topnav a .nav-text {
+    display: none;
+  }
+
+  .topnav a i {
+    font-size: 22px;
+  }
+}
+
+.topnav a .nav-text {
+  opacity: 1;
+  transition: opacity 0.3s ease;
+}
+
+@media (max-width: 992px) {
+  .topnav a .nav-text {
+    opacity: 0;
+    pointer-events: none;
+    width: 0;
+    overflow: hidden;
+  }
+}
+
+
+
+.topnav a:hover {
+  background-color: #322C75;
+  color: #ffffff;
+}
+@media (min-width: 992px) {
+  .topnav a i {
+    display: none;
+  }
+
+  .topnav a .nav-text {
+    display: inline; 
+  }
+}
+
+.icon-group {
+  display: flex;
+  align-items: center;
+  gap: 20px; 
+  margin-right: 20px; 
+}
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin-right: 20px;
+}
+
+.notif-container {
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+  .notif-container {
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+}
+.notif-icon {
+  font-size: 24px;
+  color: #322C75;
+  transition: color 0.3s ease;
+  padding: 4px;
+}
+.notif-icon:hover {
+  color: #003366; 
+}
+.notif-badge {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background-color: red;
+  color: white;
+  font-size: 12px;
+  font-weight: bold;
+  border-radius: 50%;
+  padding: 4px 6px;
+  transform: translate(50%, -50%);
+}
+.notif-popup {
+  width: 400px; 
+  height: 300px; 
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  display: none;
+  padding: 20px;
+  overflow: hidden; 
+}
+.notif-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 10px;
+}
+.notif-list {
+  list-style: none;
+  padding: 0;
+}
+
+.notif-item {
+  padding: 8px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.unread {
+  font-weight: bold;
+}
+
+.close-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+.notif-content ul {
+    list-style: none;
+    padding: 0;
+}
+.notif-filters {
+  display: flex;
+  gap: 10px;
+}
+.filter-btn {
+  background: none;
+  border: none;
+  font-size: 14px;
+  cursor: pointer;
+  padding: 5px 10px;
+  color: gray;
+  transition: color 0.3s ease, font-weight 0.3s ease;
+}
+
+.filter-btn.active {
+  color: black;
+  font-weight: bold;
+  border-bottom: 2px solid black;
+}
+
+.notif-content ul li {
+    background: #f9f9f9;
+    margin: 5px 0;
+    padding: 10px;
+    border-radius: 5px;
+  
+}
+.notif-content {
+  margin-top: 15px;
+  overflow-y: auto;
+  max-height: 200px;
+}
+
+button {
+        flex: 1;
+        max-width: 300px;
+        padding: 1rem 2rem;
+        font-size: 1.1rem;
+        background-color: #12246b;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: background-color 0.3s ease, transform 0.2s ease;
+        margin-top: 30px;
+        margin-bottom: 30px;
+    }
+    
+    button:hover {
+        background-color: #1a33a0;
+        transform: translateY(-2px);
+    }
+    
+    button:active {
+        transform: translateY(0);
+    }
+    
+    .main {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        min-height: calc(100vh - 80px);
+        padding: 20px;
+        box-sizing: border-box;
+    }
+    
+    .container {
+        min-width: 300px;
+        margin-top: 20px;
+        max-width: 400px;
+        margin: 20px auto;
+        width: 100%;
+        background: white;
+        padding: 2rem;
+        border-radius: 15px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        text-align: center;
+    }
+    .container h1 {
+        margin-bottom: 2rem;
+        color: #12246b;
+    }
+    .container h2 {
+        color: #12246b;
+        margin-bottom: 2rem;
+        font-size: 1.6rem;
+    }
+    
+    #contractForm {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        max-width: 350px;
+        margin: 0 auto;
+        text-align: left;
+    }
+    
+    #contractForm label {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        font-size: 1rem;
+        color: #333;
+        font-weight: 500;
+        min-width: 120px;
+        margin-bottom: -0.25rem;
+        justify-content: space-between;
+    }
+    
+    #contractForm input {
+        width: 200px;
+        padding: 0.6rem 0.8rem;
+        font-size: 0.95rem;
+        border: 2px solid #e0e0e0;
+        border-radius: 6px;
+        transition: all 0.3s ease;
+        background-color: #f8f9fa;
+        margin-left: auto;
+    }
+    #contractForm input,
+    #contractForm select {
+        width: 200px;
+        padding: 0.6rem 0.8rem;
+        font-size: 0.95rem;
+        border: 2px solid #e0e0e0;
+        border-radius: 6px;
+        transition: all 0.3s ease;
+        background-color: #f8f9fa;
+       
+    }
+  
+    #contractForm input:focus {
+        outline: none;
+        border-color: #12246b;
+        box-shadow: 0 0 0 3px rgba(18, 36, 107, 0.1);
+        background-color: white;
+    }
+  
+    #contractForm select:focus {
+        outline: none;
+        border-color: #12246b;
+        box-shadow: 0 0 0 3px rgba(18, 36, 107, 0.1);
+        background-color: white;
+    }
+    
+    #contractForm input::placeholder {
+        color: #999;
+    }
+    
+    #contractForm button {
+        margin: 1.5rem auto 0;
+        padding: 0.8rem 1.5rem;
+        font-size: 1rem;
+        background-color: #12246b;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        width: auto;
+        min-width: 200px;
+        display: block;
+    }
+    
+    #contractForm button:hover {
+        background-color: #1a33a0;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    
+    #contractForm button:active {
+        transform: translateY(0);
+    }
+
+.action {
+  position: relative;
+}
+
+.profile {
+  position: relative;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+
+.user-icon {
+  font-size: 24px;
+  color: #322C75;
+  transition: color 0.3s ease;
+}
+
+.menu {
+  position: absolute;
+  top: 120px;
+  right: -10px;
+  padding: 10px 20px;
+  background: #fff;
+  width: 200px;
+  box-sizing: 0 5px 25px rgba(0, 0, 0, 0.1);
+  border-radius: 15px;
+  transition: 0.5s;
+  visibility: hidden;
+  opacity: 0;
+}
+
+.menu.active {
+  top: 80px;
+  visibility: visible;
+  opacity: 1;
+}
+
+.menu::before {
+  content: "";
+  position: absolute;
+  top: -5px;
+  right: 28px;
+  width: 20px;
+  height: 20px;
+  background: #fff;
+  transform: rotate(45deg);
+}
+
+.menu h3 {
+  width: 100%;
+  text-align: center;
+  font-size: 18px;
+  padding: 20px 0;
+  font-weight: 500;
+  color: #555;
+  line-height: 1.5em;
+}
+
+.menu h3 span {
+  font-size: 14px;
+  color: #cecece;
+  font-weight: 300;
+}
+
+.menu ul li {
+  list-style: none;
+  padding: 16px 0;
+  border-top: 1px solid rgba(0, 0, 0, 0.05);
+  display: flex;
+  align-items: center;
+}
+
+.menu ul li img {
+  max-width: 20px;
+  margin-right: 10px;
+  opacity: 0.5;
+  transition: 0.5s;
+}
+
+.menu ul li:hover img {
+  opacity: 1;
+}
+
+.menu ul li a {
+  display: inline-block;
+  text-decoration: none;
+  color: #555;
+  font-weight: 500;
+  transition: 0.5s;
+}
+
+.menu ul li:hover a {
+  color: #ff5d94;
+}

@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="${#locale.language}" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title th:text="#{users}">Users</title>
+  <link rel="stylesheet" href="/css/userManager.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"/>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.2/sockjs.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+  <meta name="_csrf" th:content="${_csrf.token}"/>
+  <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+  <meta name="logoutConfirm" th:content="#{logoutConfirm}" />
+</head>
+
+<body>
+  <input type="hidden" id="user-matricule" th:value="${#authentication.name}" />
+  <header class="header">
+    <div class="header-wrapper">
+      <div class="header-container">
+        <div class="logo-container">
+          <img src="/img/BEA.jpg" alt="BEA Logo" />
+        </div>
+            <div class="topnav" id="navbar">
+   
+    <a href="/dashboard" class="nav-link">
+        <i class="fas fa-home"></i><span class="nav-text" th:text="#{dashboard}">Dashboard</span>
+    </a>
+
+    <a href="/contractsManager" class="nav-link" sec:authorize="hasAnyAuthority('ROLE_VALIDATOR1', 'ROLE_ADMIN')">
+        <i class="fas fa-file-contract"></i><span class="nav-text" th:text="#{contracts}">Contracts</span>
+    </a>
+
+    <a href="/userManager" class="nav-link" sec:authorize="hasAuthority('ROLE_ADMIN')">
+        <i class="fas fa-users"></i><span class="nav-text" th:text="#{users}">Users</span>
+    </a>
+
+    <a href="/track" class="nav-link" sec:authorize="hasAnyAuthority('ROLE_VALIDATOR2', 'ROLE_ADMIN')">
+        <i class="fas fa-file-contract"></i><span class="nav-text" th:text="#{signAndReview}">Sign & Review</span>
+    </a>
+
+    <a href="/analyse" class="nav-link" sec:authorize="isAuthenticated()">
+        <i class="fas fa-chart-line"></i><span class="nav-text" th:text="#{reports}">Reports</span>
+    </a>
+</div>
+<div class="header-right">
+      <div class="notif-container">
+                <i id="notifIcon" class="fa fa-bell notif-icon"></i>
+                <span id="notificationBadge" class="notif-badge">0</span>
+            </div>
+            <div class="action">
+                <div class="notif-container">
+                    <div class="profile" onclick="menuToggle();">
+                        <i id="user-icon" class="fas fa-user-circle user-icon"></i>
+                    </div>
+                </div>
+                <div class="menu">
+                    <h3>
+                        <span class="user-fullname" th:text="${#authentication.name}"></span>
+                        <br />
+                        <span class="user-role" th:text="${#authentication.authorities[0].authority}">Administrator</span>
+                    </h3>
+                    <ul>
+                        <li><i class="fas fa-user"></i><a href="#" th:text="#{myProfile}">My Profile</a></li>
+                        <li><i class="fas fa-cog"></i><a href="#" th:text="#{settings}">Settings</a></li>
+                        <li><i class="fas fa-question-circle"></i><a href="#" th:text="#{help}">Help</a></li>
+                        <li><i class="fas fa-sign-out-alt"></i>
+                            <form th:action="@{/logout}" method="post" style="display: inline;" id="logoutForm">
+                                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                                <a href="#" onclick="confirmLogout(event)" th:text="#{logout}">Logout</a>
+                            </form>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+  </header>
+
+  
+<main>
+  <main class="tab1">
+    <div class="tracking-container">
+      <div class="left-content">
+       
+        <h2 class="tracking-title" th:text="#{users}">Users</h2>
+        <p class="tracking-subtitle" th:text="#{totalUsers(0)}">Total 0 users</p>
+      </div>
+      <div class="right-content">
+        <input type="text" id="search" class="search-bar" th:placeholder="#{findUser}"/>
+        <button class="create-btn" onclick="window.location.href='/users/create'" th:text="#{create}">Create +</button>
+      </div>
+    </div>
+
+    <div class="tab2">
+      <div class="tracking-actions">
+         <div class="everything-checkbox">
+          <label>
+            <input type="checkbox" id="everything-checkbox" /> <span th:text="#{selectEverything}">Select Everything</span>
+          </label>
+        </div>
+        <div class="right-content">
+          <select class="contract-action">
+            <option selected disabled th:text="#{allRoles}">All Roles</option>
+            <option value="ADMIN" th:text="#{roleAdmin}">Admin</option>
+            <option value="VALIDATOR1" th:text="#{roleValidator1}">Validator 1</option>
+            <option value="VALIDATOR2" th:text="#{roleValidator2}">Validator 2</option>
+          </select>
+
+          <div class="refresh-container">
+            <button class="refresh-btn">
+              <i class="fa fa-refresh"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="tab3">
+        <section class="contracts-table">
+          <div class="table-header-container">
+            <h3 class="table-header" th:text="#{listOfUsers}">List of users</h3>
+          </div>
+          <div class="table-subheader-container">
+            <div class="table-subheader">
+              <span class="select-col"></span>
+              <span class="id-col" th:text="#{userId}">User ID</span>
+              <span class="last-name-col" th:text="#{lastname}">Last Name</span>
+              <span class="first-name-col" th:text="#{firstname}">First Name</span>
+              <span class="role-col" th:text="#{role}">Role</span>
+              <span class="actions-col" th:text="#{actions}">Actions</span>
+            </div>
+          </div>
+
+     <div class="table-body-scroll">
+         <div class="table-body"> </div>
+         </div>
+
+          </div>
+        </section>
+      </div>
+    </div>
+  </main>
+
+  <div id="deactivateModal" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <h2 th:text="#{deactivateUser}">Deactivate User</h2>
+      <div class="user-details">
+        <p><strong th:text="#{matricule}">Matricule:</strong> <span id="deactivateMatricule"></span></p>
+        <p><strong th:text="#{name}">Name:</strong> <span id="deactivateName"></span></p>
+        <p><strong th:text="#{role}">Role:</strong> <span id="deactivateRole"></span></p>
+      </div>
+      <form id="deactivateForm" method="post">
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+        <div class="form-actions">
+          <button type="submit" class="save-btn" th:text="#{confirmDeactivate}">Yes, Deactivate</button>
+          <button type="button" class="cancel-btn" id="cancelDeactivate" th:text="#{cancel}">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+  <div id="reactivateModal" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <h2 th:text="#{reactivateUser}">Reactivate User</h2>
+      <div class="user-details">
+        <p><strong th:text="#{matricule}">Matricule:</strong> <span id="reactivateMatricule"></span></p>
+        <p><strong th:text="#{name}">Name:</strong> <span id="reactivateName"></span></p>
+        <p><strong th:text="#{role}">Role:</strong> <span id="reactivateRole"></span></p>
+      </div>
+      <form id="reactivateForm" method="post">
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+        <div class="form-actions">
+          <button type="submit" class="save-btn reactivate-btn" th:text="#{confirmReactivate}">Yes, Reactivate</button>
+          <button type="button" class="cancel-btn" id="cancelReactivate" th:text="#{cancel}">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+ 
+  <div id="toastContainer" class="toast-container"></div>
+
+  <div class="notif-popup" id="notifPopup">
+    <div class="notif-header">
+      <h3 th:text="#{notifications}">Notifications</h3>
+      <div class="notif-filters">
+        <button class="filter-btn active" data-filter="all" th:text="#{all}">All</button>
+        <button class="filter-btn" data-filter="unread" th:text="#{unread}">Unread</button>
+        <button class="filter-btn" data-filter="read" th:text="#{read}">Read</button>
+      </div>
+    </div>
+    <div class="notif-content">
+      <span class="close-btn" id="closeNotif">&times;</span>
+      <ul id="notifList">
+        <!-- Notifications will be loaded here -->
+      </ul>
+    </div>
+  </div>
+
+  <script src="/js/navbar.js"></script>
+  <script src="/js/ws-notifications.js"></script>
+  <script src="/js/userManager.js"></script>
+  <script th:inline="javascript">
+ 
+    const message = /*[[${message}]]*/ null;
+    const error = /*[[${error}]]*/ null;
+    const successMessage = /*[[${successMessage}]]*/ null;
+
+    document.addEventListener('DOMContentLoaded', function() {
+      if (message) showToast(message, 'success');
+      if (error) showToast(error, 'error');
+      if (successMessage) showToast(successMessage, 'success');
+      if (errorMessage) showToast(errorMessage, 'error');
+    });
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="${#locale.language}" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title th:text="#{contractDetails}">Contract Details</title>
+    <link rel="stylesheet" href="/css/details.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" />
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+    <meta name="logoutConfirm" th:content="#{logoutConfirm}" />
+</head>
+
+<body>
+    <header class="header">
+    <div class="header-wrapper">
+      <div class="header-container">
+        <div class="logo-container">
+          <img src="/img/BEA.jpg" alt="BEA Logo" />
+        </div>
+            <div class="topnav" id="navbar">
+    <a href="/dashboard" class="nav-link">
+        <i class="fas fa-home"></i><span class="nav-text" th:text="#{dashboard}">Dashboard</span>
+    </a>
+    <a href="/contractsManager" class="nav-link" sec:authorize="hasAnyAuthority('ROLE_VALIDATOR1', 'ROLE_ADMIN')">
+        <i class="fas fa-file-contract"></i><span class="nav-text" th:text="#{contracts}">Contracts</span>
+    </a>
+
+    <a href="/userManager" class="nav-link" sec:authorize="hasAuthority('ROLE_ADMIN')">
+        <i class="fas fa-users"></i><span class="nav-text" th:text="#{users}">Users</span>
+    </a>
+    <a href="/track" class="nav-link" sec:authorize="hasAnyAuthority('ROLE_VALIDATOR2', 'ROLE_ADMIN')">
+        <i class="fas fa-file-contract"></i><span class="nav-text" th:text="#{signAndReview}">Sign & Review</span>
+    </a>
+    <a href="/analyse" class="nav-link" sec:authorize="isAuthenticated()">
+        <i class="fas fa-chart-line"></i><span class="nav-text" th:text="#{reports}">Reports</span>
+    </a>
+</div>
+              <div class="notif-container">
+                <i id="notifIcon" class="fa fa-bell notif-icon"></i>
+                <span id="notifBadge" class="notif-badge">3</span>
+            </div>
+        </div>
+    </div>
+  </header>
+     <main class="main">
+        <div class="top_main">
+            <a href="javascript:history.back()" class="back-link">
+                <button class="back-button">← <span th:text="#{back}">Back</span></button>
+            </a>
+        </div>
+
+        <div class="bottom_main">
+            <div class="left_bottom">
+                <div class="left_content">
+                    <h1 th:text="#{contractDetails}">Contract's Details :</h1>
+                    <p><span th:text="#{contractName}">Contract name</span>: <span th:text="${contract.contractTitle}"></span></p>
+                    <p><span th:text="#{contractor}">Supplier</span>:
+                        <span th:text="${contract.contractorName}"></span>
+                    </p>
+                    <p><span th:text="#{amount}">Amount</span>:
+                        <span th:text="${contract.budgetAmount}"></span>
+                    </p>
+                    <p><span th:text="#{status}">Status</span>: <span th:text="${contract.status}"></span></p>
+                </div>
+            </div>
+            <div class="right_bottom">
+                <div class="download">
+                    <a th:href="@{/contracts/{id}/download(id=${contract.contractId})}" th:text="#{downloadContract}">Download Word Document</a>
+                </div>
+
+                <div th:if="${mode == 'edit' and (#strings.toLowerCase(contract.status) == 'draft' or hasComment)}">
+                    <form th:action="@{'/contracts/' + ${contract.contractId} + '/upload'}" method="post" enctype="multipart/form-data">
+                        <label for="file" th:text="#{uploadModifiedContract}">Upload Modified Contract (DOCX):</label>
+                        <input class="button" type="file" name="file" accept=".docx" required>
+                        <button type="submit" th:text="#{uploadAndReplace}">Upload and Replace File</button>
+                    </form>
+                </div>
+
+                <div th:if="${mode != 'edit' and #strings.toLowerCase(contract.status) == 'draft'}">
+                    <form th:action="@{/contracts/{id}/confirm(id=${contract.contractId})}" method="post">
+                        <button type="submit" th:text="#{confirmAndSave}">Confirm and Save</button>
+                    </form>
+                </div>
+
+                <p th:if="${message}" th:text="${message}" style="color: green;"></p>
+                <p th:if="${error}" th:text="${error}" style="color: red;"></p>
+            </div>
+        </div>
+    </main>
+</body>
+</html>

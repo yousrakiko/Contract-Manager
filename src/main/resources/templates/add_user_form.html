@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="eng" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Contract Management</title>
+    <link rel="stylesheet" href="/css/userform.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" />
+
+</head>
+
+
+<body>
+    <header class="header">
+        <div class="header-wrapper">
+            <div class="header-container">
+                <div class="logo-container">
+                    <img src="/img/BEA.jpg" alt="BEA Logo" />
+                </div>
+                <div class="topnav" id="navbar">
+                    <a href="/dashboard" class="nav-link">
+                        <i class="fas fa-home"></i><span class="nav-text">Dashboard</span>
+                    </a>
+                    <a href="/contractsManager" class="nav-link">
+                        <i class="fas fa-file-contract"></i><span class="nav-text">Contracts</span>
+                    </a>
+
+                    <a href="/userManager" class="nav-link">
+                        <i class="fas fa-users"></i><span class="nav-text">Users</span>
+                    </a>
+
+                    <a href="/track" class="nav-link">
+                        <i class="fas fa-file-contract"></i><span class="nav-text">Tracking</span>
+                    </a>
+
+                    <a href="/analyse" class="nav-link">
+                        <i class="fas fa-chart-line"></i><span class="nav-text">Reports</span>
+                    </a>
+                <div class="header-right">
+              <div class="notif-container">
+                <i id="notifIcon" class="fa fa-bell notif-icon"></i>
+                <span id="notifBadge" class="notif-badge">3</span>
+            </div>
+            <div class="action">
+                <div class="notif-container">
+                    <div class="profile" onclick="menuToggle();">
+                        <i id="user-icon" class="fas fa-user-circle user-icon"></i>
+                    </div>
+                </div>
+                <div class="menu">
+                    <h3>John Doe<br /><span>Administrator</span></h3>
+                    <ul>
+                        <li><i class="fas fa-user"></i><a href="#">My Profile</a></li>
+                        <li><i class="fas fa-cog"></i><a href="#">Settings</a></li>
+                        <li><i class="fas fa-question-circle"></i><a href="#">Help</a></li>
+                        <li><i class="fas fa-sign-out-alt"></i><a href="/logout">Logout</a></li>
+                    </ul>
+                  </div>
+                </div>
+            </div>
+        </div>
+    </div>
+  </header>
+    <div class="main">
+
+        <div class="container">
+            <h2>Fill in User info</h2>
+            <form id="contractForm" th:action="@{/api/users/add}" th:object="${user}" method="post">
+                <label>matricule:
+                    <input type="text" th:field="*{matricule}" required />
+                </label>
+                <div class="error" th:if="${#fields.hasErrors('matricule')}" th:errors="*{matricule}">Matricule Error</div><br>
+
+                <label>first name:
+                    <input type="text" th:field="*{firstName}" required />
+                </label>
+                <div class="error" th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}">First Name Error</div><br>
+
+                <label>last name:
+                    <input type="text" th:field="*{lastName}" required />
+                </label>
+                <div class="error" th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}">Last Name Error</div><br>
+
+                <label>email:
+                    <input type="email" th:field="*{email}" required />
+                </label>
+                <div class="error" th:if="${#fields.hasErrors('email')}" th:errors="*{email}">Email Error</div><br>
+
+                <label>password:
+                    <input type="password" th:field="*{password}" required />
+                </label>
+                <div class="error" th:if="${#fields.hasErrors('password')}" th:errors="*{password}">Password Error</div><br>
+
+                <label>role:
+                    <select th:field="*{role}" required>
+                        <option value="">Select Role</option>
+                        <option th:each="role : ${roles}" 
+                                th:value="${role.roleId}" 
+                                th:text="${role.roleName}">
+                        </option>
+                    </select>
+                </label>
+                <div class="error" th:if="${#fields.hasErrors('role')}" th:errors="*{role}">Role Error</div><br>
+
+                <label>structure:
+                    <input type="number" th:field="*{structId}" required />
+                </label><br>
+
+                <button type="submit">Create User</button>
+            </form>
+        </div>
+    </div>
+</body>

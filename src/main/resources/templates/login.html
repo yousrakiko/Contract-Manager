@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="with=device-width, initial-scale=1.0">
+    <title>Banque Exterieure d'Algerie </title>
+    <link rel="stylesheet" href="https://fonts.gestatic.com">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="icon" href="/img/1200px-BEA.svg.png" type="image/x-icon">
+    <link rel="stylesheet" href="/css/login.css">
+</head>
+
+<body>
+    <section class="header">
+        <nav>
+            <img class="logo" src="/img/BEA.jpg">
+        </nav>
+        <div class="text-box">
+            <div class="box">
+                <div class="container">
+                    <h1> LOGIN </h1>
+                   
+                    <form th:action="@{/login}" method="post">
+                        <input type="text" name="matricule" placeholder="Matricule" />
+                        <input type="password" name="password" placeholder="Password" />
+                        <button type="submit" class="h1-btn">Log in</button>
+                        <p><a th:href="@{/forgot-password}" class="forgot-password">Forgot Password?</a></p>
+                    </form>
+                </div>
+
+            <div class="toast" role="alert" aria-live="assertive" aria-atomic="true" id="toastNotice" 
+   style="visibility:hidden;display:none;">
+        <div class="toast-header">
+        </div>
+        <div class="toast-body">
+          Mot de passe ou login erroné.
+        </div>
+      </div>
+</body>
+<script>
+console.log("------------------")
+window.addEventListener('DOMContentLoaded', (event) => {
+    const urlwin = new URLSearchParams(window.location.search);
+    const errorLog = urlwin.get('error');
+    
+    
+    let user_login=document.getElementById('username').value;
+	 if(user_login!=""){
+	 $.ajax({
+			type:"GET",
+			url:"/IsUsersBlock?user_login="+user_login,
+			success:function(data){
+			
+				console.log("tester : "+data)
+		
+
+			}
+		});
+	 }
+  
+      if (errorLog === 'true') {
+       
+        var myAlert =document.getElementById('toastNotice');
+    	myAlert.style.display="block"
+   		myAlert.style.visibility="visible"
+	    setTimeout(() => {
+	    myAlert.style.display = 'none';
+	    myAlert.style.visibility = 'hidden';
+	}, 3000);
+        console.log("------------------"+urlwin)
+    }
+});
+</script>
+</html>

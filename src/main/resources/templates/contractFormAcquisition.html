@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Acquisition Contract Form</title>
+    <link rel="stylesheet" href="/css/main.css">
+
+
+</head>
+
+<body>
+<nav class="navbar">
+        <div class="logo"> <img src="/img/BEA.jpg" alt="BEA Logo" style="width: 200px;"></div>
+     
+    </nav>
+
+    
+
+    <div class="container">
+        <div class="form-header">
+            <a href="javascript:history.back()" class="back-link">
+                <button class="back-button">← Back</button>
+            </a>
+            <h2>Fill in Supply Contract Info</h2>
+        </div>
+        <form id="contractForm" action="/contracts/submit/acquisition" method="post" th:action="@{/contracts/submit/acquisition}" th:object="${contractForm}">
+            <div class="form-sections">
+                <div class="contract_info">
+                    <label>Nom du contrat:
+                    <input type="text" th:field="*{contractName}" required />
+                </label><br>
+                    <label> Objet du contrat:
+                    <input type="text" th:field="*{contractObject}" required />
+                </label><br>
+       
+                    <label class="section-label">Montant du contrat:</label>
+                    <div class="stacked-group">
+                        <label>En chiffres:
+        <input type="text" th:field="*{montantchiffres}" required />
+    </label>
+                        <label>En lettres:
+        <input type="text" th:field="*{montantlettres}" required />
+    </label>
+                    </div>
+
+                    <label class="section-label">Montant en HT:</label>
+                    <div class="stacked-group">
+                        <label>En chiffres:
+        <input type="text" th:field="*{HTchiffres}" required />
+    </label>
+                        <label>En lettres:
+        <input type="text" th:field="*{HTlettres}" required />
+    </label>
+                    </div>
+                    
+                    <label class="section-label">Montant de la TVA:</label>
+                    <div class="stacked-group">
+                        <label>En chiffres:
+        <input type="text" th:field="*{TVAchiffres}" required />
+    </label>
+                        <label>En lettres:
+        <input type="text" th:field="*{TVAlettres}" required />
+    </label>
+                    </div>
+                    <label>Delai d'éxecution "lettres(chiffres)":
+                    <input type="text" th:field="*{delaiExec}" required/>
+                </label><br>
+                    <label>Delai de garantie "lettres(chiffres)":
+                    <input type="text" th:field="*{delaiGar}" required/>
+
+                </label><br>
+
+                </div>
+                <div class="supplyer_info">
+                    <label>Nom de l'entreprise:
+                    <input type="text" th:field="*{companyName}" required/>
+                </label><br>
+                    <label>Capital en DA:
+                    <input type="text" th:field="*{capital}" required/>
+                </label><br>
+                    <label>Siege social:
+                    <input type="text" th:field="*{SiegeSocial}" required/>
+                </label><br>
+                    <label>Representée par:
+                    <input type="text" th:field="*{representatif}" required/>
+                </label>
+                    <label>en qualité de:
+                    <input type="text" th:field="*{repPosition}" required/>
+                </label> <br>
+                    <label>Inscrite sous registre Commercial Nº:
+                    <input type="text" th:field="*{regCom}" required />
+                </label> <br>
+                    <label>Fax de l'entreprise:
+                    <input type="text" th:field="*{fax}" required />
+                </label> <br>
+                    <label>Telephone de l'entreprise:
+                    <input type="text" th:field="*{tel}" required />
+                </label><br>
+                    <label>Email de l'entreprise:
+                    <input type="email" th:field="*{email}" required />
+                </label> <br>
+                    <label>Banque de l'entreprise:
+                    <input type="text" th:field="*{bank}" required />
+                </label> <br>
+                    <label>Adresse de la banque:
+                    <input type="text" th:field="*{bankAdress}" required />
+                </label> <br>
+                    <label>Nº de compte banquaire de la banque:
+                    <input type="text" th:field="*{compte}" required />
+                </label>
+                    <label>Clé:
+                    <input type="text" th:field="*{key}" required />
+                </label><br>
+
+                </div>
+            </div>
+            <button type="submit">Generate Contract</button>
+        </form>
+    </div>
+
+</body>
+
+</html>

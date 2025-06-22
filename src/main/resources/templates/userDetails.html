@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>User Details</title>
+    <link rel="stylesheet" href="/css/details.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" />
+  
+</head>
+
+<body>
+    <header class="header">
+    <div class="header-wrapper">
+      <div class="header-container">
+        <div class="logo-container">
+          <img src="/img/BEA.jpg" alt="BEA Logo" />
+        </div>
+            <div class="topnav" id="navbar">
+   
+    <a href="/dashboard" class="nav-link">
+        <i class="fas fa-home"></i><span class="nav-text">Dashboard</span>
+    </a>
+
+    <a href="/contractsManager" class="nav-link" sec:authorize="hasAnyAuthority('ROLE_VALIDATOR1', 'ROLE_ADMIN')">
+        <i class="fas fa-file-contract"></i><span class="nav-text">Contracts</span>
+    </a>
+
+    <a href="/userManager" class="nav-link" sec:authorize="hasAuthority('ROLE_ADMIN')">
+        <i class="fas fa-users"></i><span class="nav-text">Users</span>
+    </a>
+
+    <a href="/track" class="nav-link" sec:authorize="hasAnyAuthority('ROLE_VALIDATOR2', 'ROLE_ADMIN')">
+        <i class="fas fa-file-contract"></i><span class="nav-text">Sign & Review</span>
+    </a>
+
+    <a href="/analyse" class="nav-link" sec:authorize="isAuthenticated()">
+        <i class="fas fa-chart-line"></i><span class="nav-text">Reports</span>
+    </a>
+</div>
+<div class="header-right">
+              <div class="notif-container">
+                <i id="notifIcon" class="fa fa-bell notif-icon"></i>
+                <span id="notifBadge" class="notif-badge">3</span>
+            </div>
+            <div class="action">
+                <div class="notif-container">
+                    <div class="profile" onclick="menuToggle();">
+                        <i id="user-icon" class="fas fa-user-circle user-icon"></i>
+                    </div>
+                </div>
+                <div class="menu">
+                    <h3>John Doe<br /><span>Administrator</span></h3>
+                    <ul>
+                        <li><i class="fas fa-user"></i><a href="#">My Profile</a></li>
+                        <li><i class="fas fa-cog"></i><a href="#">Settings</a></li>
+                        <li><i class="fas fa-question-circle"></i><a href="#">Help</a></li>
+                        <li><i class="fas fa-sign-out-alt"></i><a href="/logout">Logout</a></li>
+                    </ul>
+                  </div>
+                </div>
+            </div>
+        </div>
+    </div>
+  </header>
+    <main class="main">
+        <div class="top_main">
+            <a th:href="@{/userManager}">
+                <button class="back-button">← Back</button>
+            </a>
+        </div>
+
+        <div class="bottom_main">
+            <div class="left_bottom">
+                <div class="left_content">
+                    <h2>User Details</h2>
+                    <p><strong>Matricule:</strong> <span th:text="${user.matricule}"></span></p>
+                    <p><strong>Name:</strong> <span th:text="${user.firstName + ' ' + user.lastName}"></span></p>
+                    <p><strong>Email:</strong> <span th:text="${user.email}"></span></p>
+                    <p><strong>Role:</strong> <span th:text="${user.role.roleName}"></span></p>
+                    <p><strong>Structure ID:</strong> <span th:text="${user.structId}"></span></p>
+                    <p><strong>Status:</strong> <span th:text="${user.status}"></span></p>
+                </div>
+            </div>
+
+            <div class="right_bottom">
+                <div class="download">
+                    <a th:href="@{/api/users/{matricule}/pdf(matricule=${user.matricule})}" target="_blank">Download PDF</a>
+                </div>
+                <br />
+                <p th:if="${message}" th:text="${message}" style="color: green;"></p>
+                <p th:if="${error}" th:text="${error}" style="color: red;"></p>
+            </div>
+        </div>
+    </main>
+
+    <div id="roleModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Change User Role</h2>
+            <form id="roleForm" th:action="@{/api/users/{matricule}/change-role(matricule=${user.matricule})}" method="post">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                <p>Current Role: <strong th:text="${user.role.roleName}"></strong></p>
+                
+                <div class="form-group">
+                    <label for="newRole">Select New Role:</label>
+                    <select name="newRole" id="newRole" required>
+                        <option th:each="role : ${roles}" th:value="${role.roleName}" th:text="${role.roleName}"
+                            th:selected="${role.roleName == user.role.roleName}"></option>
+                    </select>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="submit" class="save-btn">Save Changes</button>
+                    <button type="button" class="cancel-btn" id="cancelChange">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const modal = document.getElementById('roleModal');
+        const closeBtn = document.querySelector('.close');
+        const cancelBtn = document.getElementById('cancelChange');
+
+       
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('edit') === 'true') {
+            modal.style.display = 'block';
+        }
+
+        closeBtn.addEventListener('click', () => {
+            modal.style.display = 'none';
+        });
+
+        cancelBtn.addEventListener('click', () => {
+            modal.style.display = 'none';
+        });
+
+        window.addEventListener('click', (event) => {
+            if (event.target === modal) {
+                modal.style.display = 'none';
+            }
+        });
+    });
+</script>
+</html>
